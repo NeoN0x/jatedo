@@ -1,7 +1,7 @@
 {
   "name": "jatedo",
   "description": "JaTeDo - Javascript Test Documentator is a lightweight and dead simple solution to generate tests documentations usings easy jsdoc-like syntax.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "NeoN0x",
   "bin": {
     "jatedo": "./bin/run"
