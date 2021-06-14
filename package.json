@@ -1,0 +1,50 @@
+{
+  "name": "jatedo",
+  "description": "JaTeDo - Javascript Test Documentator is a lightweight and dead simple solution to generate tests documentations usings easy jsdoc-like syntax.",
+  "version": "0.0.1",
+  "author": "NeoN0x",
+  "bin": {
+    "jatedo": "./bin/run"
+  },
+  "bugs": "https://github.com/NeoN0x/jatedo/issues",
+  "dependencies": {
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/plugin-help": "^3.2.2",
+    "comment-parser": "^1.1.5"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.26.0",
+    "cli-ux": "^5.5.1",
+    "eslint": "^7.28.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-html": "^6.1.2",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/src"
+  ],
+  "homepage": "https://github.com/NeoN0x/jatedo",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "oclif": {
+    "bin": "jatedo"
+  },
+  "repository": "NeoN0x/jatedo",
+  "scripts": {
+    "demo": "./bin/run -i example -o example/generated",
+    "posttest": "eslint .",
+    "prepack": "oclif-dev readme",
+    "test": "echo NO TESTS",
+    "version": "oclif-dev readme && git add README.md"
+  }
+}

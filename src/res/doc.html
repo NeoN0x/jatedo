@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="full-height full-height">
+  <!--
+    WARNING! Make sure that you match all Quasar related
+    tags to the same version! (Below it's "@2.0.0-rc.1")
+  -->
+
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.0.0-rc.1/dist/quasar.prod.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body class="full-width full-height">
+    <div id="q-app" class="full-height full-width">
+      <q-toolbar class="bg-teal text-white">
+        <q-toolbar-title>
+         JaTeDo - Project Test Documentation
+        </q-toolbar-title>
+      </q-toolbar>
+
+      <div class="bg-grey-2 full-height">
+        <div class="q-pt-lg q-mx-md">
+          <div v-for="(module, name) of data.modules" class="q-mb-lg">
+            <div class="text-h3 q-mb-md">
+              {{ name }}
+            </div>
+            <Notes :data="module.notes"></Notes>
+            <q-table
+              :rows="module.lines"
+              :columns="columns"
+              :pagination="{ page: 1, rowsPerPage: -1 }"
+              :hide-bottom="true"
+              row-key="name"
+            >
+              <template v-slot:pagination="scope">
+                Noooo
+              </template>
+              <template v-slot:header="props">
+                <q-tr :props="props" class="bg-teal-10">
+                  <q-th
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                    class="text-italic text-white"
+                  >
+                    {{ col.label }}
+                  </q-th>
+                </q-tr>
+              </template>
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td key="feature" :props="props">
+                    {{ props.row.feature}}
+                  </q-td>
+                  <q-td key="case" :props="props">
+                    {{ props.row.case}}
+                  </q-td>
+                  <q-td key="expectations" :props="props">
+                    {{ props.row.result }}
+                    <Expectations :data="props.row.expectations"></Expectations>
+                  </q-td>
+                  <q-td key="tags" :props="props">
+                    <q-badge v-for="tag in props.row.tags" color="grey" class="q-mr-md">
+                      {{ tag }}
+                    </q-badge>
+                  </q-td>
+                  <q-td key="notes" :props="props">
+                    <Notes :data="props.row.notes" bg></Notes>
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </div>
+        </div>
+        <div class="q-mt-xl q-px-lg text-center text-italic text-grey">
+          <q-separator></q-separator>
+          <br>
+          Powered by <a href="https://www.npmjs.com/package/jatedo">JaTeDo</a>, the Javascript Test Documentator.
+          <div class="q-mt-md text-caption text-blue-grey">
+            JaTeDo version {{ data.jatedoVersion }} - Generated on {{ data.generatedAt }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.0.0-rc.1/dist/quasar.umd.prod.js"></script>
+    
+    <script>
+      /* eslint-disable no-undef */
+      const app = Vue.createApp({
+        data () {
+          return {
+            data: {
+              // ...
+            },
+            columns: [{
+              name: 'feature',
+              align: 'left',
+              label: 'Feature',
+              sortable: true
+            }, {
+              name: 'case',
+              field: 'case',
+              align: 'left',
+              label: 'Case',
+              sortable: true
+            }, {
+              name: 'expectations',
+              align: 'left',
+              label: 'Expectations'
+            }, {
+              name: 'tags',
+              align: 'center',
+              label: 'Tags'
+            }, {
+              name: 'notes',
+              align: 'left',
+              label: 'Notes'
+            }]
+          }
+        },
+
+        created () {
+          // Quote is required as it is JSON input
+          // eslint-disable-next-line quotes
+          const data = JSON.parse(`%DATA%`)
+          this.data = data
+      
+          for (const moduleName in data.modules) {
+            this.data.modules[moduleName].lines = []
+
+            for (const featureName in data.modules[moduleName].features) {
+              for (const caseName in data.modules[moduleName].features[featureName].cases) {
+                this.data.modules[moduleName].lines.push({
+                  module: moduleName,
+                  feature: featureName,
+                  case: caseName,
+                  tags: data.modules[moduleName].features[featureName].cases[caseName].tags,
+                  expectations: data.modules[moduleName].features[featureName].cases[caseName].expectations,
+                  notes: data.modules[moduleName].features[featureName].cases[caseName].notes,
+                  result: data.modules[moduleName].features[featureName].cases[caseName].result
+                })
+              }
+            }
+          }
+        }
+      })
+      app.component('expectations', {
+        props: {
+          data: Array
+        },
+        template: `
+           <div
+              v-if="data.length > 0"
+              class="bg-purple-2 text-caption text-grey-10"
+            >
+              <ul>
+                <li v-for="expectation in data">
+                  {{ expectation }}
+                </li>
+              </ul>
+          </div>
+        `
+      })
+      app.component('notes', {
+        props: {
+          data: Array,
+          bg: Boolean
+        },
+        template: `
+          <ul
+            v-if="data.length > 0"
+            :class="(bg ? 'bg-blue-2 ' : '') + 'text-caption text-grey-10'"
+          >
+            <li v-for="expectation in data">
+              {{ expectation }}
+            </li>
+          </ul>
+          <div v-else class="text-italic text-dark">
+            N/A
+          </div>
+        `
+      })
+      app.use(Quasar)
+      app.mount('#q-app')
+    </script>
+  </body>
+</html>
